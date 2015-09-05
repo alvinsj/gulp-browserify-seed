@@ -1,52 +1,28 @@
-var gulp = require('gulp'),
- 
-    source = require('vinyl-source-stream'),
-    browserify = require('browserify'),
-    babelify = require('babelify'),
-    watchify = require('watchify'),
-    gutil = require('gulp-util'),
-    chalk = gutil.colors;
+var args = require('yargs').argv,
+    gulp = require('gulp'),
+    $ = require('gulp-load-plugins')(),
+    opts = {args: args},
+    config = {
+        host: 'localhost:3000',
+        rootDir: __dirname,
 
-var build = function(watch, watchCallback){
-    var b = browserify({
-        debug: true,
-        cache: {},
-        packageCache: {},
-        fullPaths: true,
-        paths: ["src/js"],
-        extension: ['js']
-    });
-    b.transform(babelify);
-    b = watch ? watchify(b) : b;
-    b.add('./src/js/index.js');
+        jsDir: './src/js',
+        sassDir: './src/sass',
 
-    var rebundle = function(){
-        return b.bundle()
-                .pipe(source('bundle.js'))
-                .pipe(gulp.dest('./dist/'));
-    }
+        vendorDir: './vendor',
+        distDir: './dist',
 
-    b.on('update', function(path){
-        gutil.log(chalk.magenta('rebundling...'));
-        rebundle();
-    });
+        noStackTrace: true
+    };
 
-    b.on('time', function(time){
-        gutil.log(chalk.black.bgGreen("Finished 'rebundle()' after " + time + " ms"));
-        watchCallback();
-    });
+opts['config'] = config;
 
-    return rebundle();
-}
+require('./gulp/browserify')(gulp, opts, $);
+require('./gulp/bower-copy')(gulp, opts, $);
+require('./gulp/sass')(gulp, opts, $);
+require('./gulp/jest')(gulp, opts, $);
 
-gulp.task('default', ['browserify']);
-gulp.task('watch', ['watchify']);
-gulp.task('browserify', function(){
-    return build(false);
-});
-gulp.task('watchify', function(){
-    return build(true, function(){
-    });
-});
-
-
+gulp.task('default',['sass', 'browserify']);
+gulp.task('watch', ['watch-browserify', 'watch-sass']);
+gulp.task('test', ['jest']);
+gulp.task('test-one', ['watch-jest']);
