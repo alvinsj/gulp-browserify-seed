@@ -1,0 +1,20 @@
+{
+  "name": "gulp-browserify-seed",
+  "version": "0.0.0",
+  "homepage": "https://github.com/alvinsj/gulp-browserify-seed",
+  "authors": [
+    "alvinsj <email.to.alvin@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "twbs/bootstrap#v4-dev",
+    "font-awesome": "~4.4.0"
+  }
+}
